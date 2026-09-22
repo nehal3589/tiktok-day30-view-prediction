@@ -2,143 +2,84 @@
 
 ## Project Overview
 
-A predictive modeling project developed for a TikTok view prediction competition.
+This project was developed for a predictive modeling competition focused on predicting the cumulative number of views a TikTok video would reach by Day 30.
 
-The goal is to predict the cumulative number of views a video will reach by Day 30 (`target_day30_views`) using information available during the first five days after publication.
-
-The project uses video metadata, early engagement data, and historical creator statistics to build a regression model.
+The model uses video metadata, early engagement data from Days 0–5, and historical creator statistics to predict `target_day30_views`.
 
 ---
 
 ## Problem Statement
 
-The objective is to predict the Day-30 cumulative views of TikTok videos based only on historical information available during the early stage of each video's lifecycle.
+The goal is to predict a video's Day-30 cumulative views using only information available during its early lifecycle.
 
-The available data includes:
-
-- Video metadata
-- Daily engagement statistics
-- Daily creator statistics
-- Engagement information from Day 0 to Day 5
-
-The competition evaluates predictions using Root Mean Squared Error (RMSE).
+The competition evaluates predictions using **Root Mean Squared Error (RMSE)**.
 
 ---
 
-## Data
+## Dataset
 
-The project uses the following competition-provided datasets:
+The competition provided:
 
-- `train_videos.csv`
-- `test_videos.csv`
-- `engagement_daily.csv`
-- `creators_daily.csv`
-- `sample_submission.csv`
+- `train_videos.csv` — training video metadata and target
+- `test_videos.csv` — test video metadata
+- `engagement_daily.csv` — daily video engagement statistics
+- `creators_daily.csv` — daily creator statistics
 
-The original competition datasets are not included in this repository.
+Dataset sizes:
+
+- Training: 12,000 videos
+- Test: 3,001 videos
+- Engagement: 79,489 records
+- Creators: 252,166 records
 
 ---
 
 ## Feature Engineering
 
-The project creates features from the available video, engagement, and creator data.
+The final feature set combines several types of information:
 
-### Video Features
+### Video Metadata
+Features such as duration, aspect ratio, language, content indicators, word count, hashtags, speaking rate, emotions, and posting time.
 
-The following video-level features are used:
+### Early Engagement
+Day-5 views and engagement metrics including likes, comments, shares, collects, downloads, and WhatsApp shares.
 
-- Duration
-- Video resolution
-- English language indicator
-- AI-generated indicator
-- Advertisement indicator
-- Word count
-- Emoji count
-- Question count
-- Hashtag count
-- Speaking rate
-- Emotion-related features
-- Creation hour
-- Creation weekday
-
-### Day-5 Engagement Features
-
-Engagement information available on Day 5 is used to extract:
-
-- Day-5 views
-- Day-5 likes
-- Day-5 comments
-- Day-5 shares
-- Day-5 collects
-- Day-5 downloads
-- Day-5 WhatsApp shares
-
-### Engagement Summary Features
-
-Engagement data from Day 0 through Day 5 is summarized using:
-
-- Mean views
-- Maximum views
-- Standard deviation of views
-- Mean likes
-- Mean comments
-- Mean shares
-- Mean collects
-- Mean downloads
-- Mean WhatsApp shares
+### Engagement Summary
+Mean, maximum, and standard deviation of views and mean engagement statistics across Days 0–5.
 
 ### Growth Features
+The change and growth ratio between Day-0 and Day-5 views.
 
-Early view growth is represented using:
+### Interaction Ratios
+Engagement-to-view ratios such as:
 
-- Day-0 views
-- Day-5 views
-- Day-0 to Day-5 view growth
-- View growth ratio
+- Like / View
+- Comment / View
+- Share / View
+- Collect / View
+- Download / View
+- WhatsApp Share / View
 
-### Interaction Features
+### Creator Features
+Historical creator statistics including follower count, following count, total favorited, video count, and verification status.
 
-The project calculates Day-5 engagement-to-view ratios:
-
-- Like/View ratio
-- Comment/View ratio
-- Share/View ratio
-- Collect/View ratio
-- Download/View ratio
-- WhatsApp Share/View ratio
-
-### Creator Historical Features
-
-Historical creator information available during the video's early period is used to create:
-
-- Mean follower count
-- Maximum follower count
-- Mean following count
-- Mean total favorited
-- Mean video count
-- Enterprise verification status
+The final dataset contained **48 numerical features**.
 
 ---
 
 ## Data Leakage Prevention
 
-Only information available during the early period of the video is used for feature engineering.
+Engagement features were restricted to Days 0–5.
 
-Engagement features are restricted to Days 0–5.
+Creator statistics were also restricted to the period from the video's creation date through five days after posting.
 
-Creator statistics are also filtered to the period from the video's creation date through Day 5.
-
-This prevents information from later periods from being used to predict Day-30 views.
+No external data or information beyond the allowed observation period was used.
 
 ---
 
 ## Model
 
-Several regression approaches were explored during the project.
-
-The final model used for the competition submission was:
-
-**RandomForestRegressor with Poisson criterion**
+The final model is a **Random Forest Regressor with Poisson Criterion**.
 
 ### Final Configuration
 
@@ -150,3 +91,47 @@ max_features = 0.7
 criterion = "poisson"
 random_state = 42
 n_jobs = -1
+```
+
+---
+
+## Cross-Validation
+
+A 5-fold shuffled cross-validation strategy was used with `random_state=42`.
+
+| Fold | RMSE |
+|---|---:|
+| 1 | 70,957.90 |
+| 2 | 98,812.56 |
+| 3 | 51,461.84 |
+| 4 | 200,378.13 |
+| 5 | 57,198.73 |
+| **Mean** | **95,761.83** |
+
+---
+
+## Technologies
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- KaggleHub
+- Google Colab
+
+---
+
+## Requirements
+
+```text
+pandas
+numpy
+scikit-learn
+kagglehub
+```
+
+---
+
+## Author
+
+**Nehal Hamed Alzahrani**
