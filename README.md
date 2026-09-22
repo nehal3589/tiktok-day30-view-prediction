@@ -81,18 +81,6 @@ No external data or information beyond the allowed observation period was used.
 
 The final model is a **Random Forest Regressor with Poisson Criterion**.
 
-### Final Configuration
-
-```text
-n_estimators = 500
-max_depth = None
-min_samples_leaf = 2
-max_features = 0.7
-criterion = "poisson"
-random_state = 42
-n_jobs = -1
-```
-
 ---
 
 ## Cross-Validation
@@ -109,6 +97,16 @@ A 5-fold shuffled cross-validation strategy was used with `random_state=42`.
 | **Mean** | **95,761.83** |
 
 ---
+### Final Configuration
+```text
+n_estimators = 500
+max_depth = None
+min_samples_leaf = 2
+max_features = 0.7
+criterion = "poisson"
+random_state = 42
+n_jobs = -1
+```
 
 ## Technologies
 
